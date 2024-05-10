@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-filename = "all_seasons.csv"
+filename = "datasets/all_seasons.csv"
 
 df = pd.read_csv(filename)
 
