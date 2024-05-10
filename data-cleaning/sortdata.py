@@ -31,9 +31,7 @@ filtered['season'] = filtered['season'].str[:4]
 
 filtered['season'] = pd.to_numeric(filtered['season'])
 
-rookieseasons = filtered[filtered['draft_year'].isin([filtered['season'], filtered['season'] + 1])]
-
-
+rookieseasons = filtered[(filtered['draft_year'] == filtered['season']) | (filtered['draft_year'] == filtered['season'] + 1)]
 
 rookieseasons.to_csv("newseasons.csv", index = False)
 
