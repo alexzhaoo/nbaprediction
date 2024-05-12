@@ -1,1 +1,1 @@
- NBA PREDICTION
+This is a binary classification project based around stats from rookie players in the NBA. Given the first two seasons of an NBA player, will they become an allstar?
