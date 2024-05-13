@@ -62,7 +62,17 @@ def getStats(idlist):
 
 finaldf = getStats(idlist)
 
-finaldf.to_csv("alltimegreatFirstTwoSeasons.csv",index = False)
+filtered = finaldf.copy()
+
+filtered['SEASON_ID'] = filtered['SEASON_ID'].str[:4]  
+
+filtered['SEASON_ID'] = pd.to_numeric(filtered['SEASON_ID'])  
+
+filtered = filtered[filtered['SEASON_ID'] >= 1981]  
+
+filtered.drop(['TEAM_ABBREVIATION', 'TEAM_ID', 'PLAYER_ID', 'SEASON_ID', 'LEAGUE_ID' ], axis=1, inplace=True)
+
+filtered.to_csv("alltimegreatFirstTwoSeasons.csv",index = False)
 
 
 

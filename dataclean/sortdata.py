@@ -33,6 +33,7 @@ filtered['season'] = pd.to_numeric(filtered['season'])
 
 rookieseasons = filtered[(filtered['draft_year'].astype(float)+ 1 == filtered['season'].astype(float)) | (filtered['draft_year'].astype(float) == filtered['season'].astype(float)) ]
 
+rookieseasons.drop(['player_height', 'draft_year', 'ovrdraftpick', 'player_name','season'], axis=1, inplace=True )
 
 rookieseasons.to_csv("newseasons.csv", index = False)
 

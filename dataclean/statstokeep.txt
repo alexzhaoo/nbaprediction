@@ -1,0 +1,8 @@
+DROPPING THESE STATS IN NEWSEASONS.csv:
+player_height, draft_year, ovrdraftpick, player_name
+
+DROPTHESEATS IN alltimegreat.csv:
+TEAM_ABBREVIATION, TEAM_ID, PLAYER_ID, SEASON_ID, LEAGUE_ID, 
+
+
+to do: 
