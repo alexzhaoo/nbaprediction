@@ -71,7 +71,7 @@ filtered['SEASON_ID'] = pd.to_numeric(filtered['SEASON_ID'])
 
 filtered = filtered[filtered['SEASON_ID'] >= 1981]  
 
-filtered.drop(['TEAM_ABBREVIATION', 'TEAM_ID', 'PLAYER_ID', 'SEASON_ID', 'LEAGUE_ID', 'net_rating' ], axis=1, inplace=True)
+filtered.drop(['TEAM_ABBREVIATION', 'TEAM_ID', 'PLAYER_ID', 'SEASON_ID', 'LEAGUE_ID' ], axis=1, inplace=True)
 
 filtered['isallstar'] = 1
 
