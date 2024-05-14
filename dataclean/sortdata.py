@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 
 filename = "datasets/all_seasons.csv"
+filename2 = "datasets/final_data.csv"
+filename3 = "datasets/alltimegreats.csv"
 
 df = pd.read_csv(filename)
 
@@ -9,6 +11,22 @@ df = pd.read_csv(filename)
 
 # 10
 
+namedf = pd.read_csv(filename2)
+
+
+namedf['name'] = namedf['first'] + ' ' + namedf['last']
+
+def checkAllstar(df,namedf,filename3):
+
+    df3 = pd.read_csv(filename3)
+    
+    # result = pd.concat([df3.iloc[:, 0], namedf['name']], axis=1)
+
+    mask = df.iloc[:, 0].isin(namedf['name'])
+
+    df['isallstar'] = mask.astype(int)
+
+    return df
 
 
 mask = df.iloc[:,10] != 'Undrafted'
@@ -31,11 +49,21 @@ filtered['season'] = filtered['season'].str[:4]
 
 filtered['season'] = pd.to_numeric(filtered['season'])
 
-rookieseasons = filtered[(filtered['draft_year'].astype(float)+ 1 == filtered['season'].astype(float)) | (filtered['draft_year'].astype(float) == filtered['season'].astype(float)) ]
+rookieseasons = filtered.copy()
 
-rookieseasons.drop(['player_height', 'draft_year', 'ovrdraftpick', 'player_name','season'], axis=1, inplace=True )
 
-rookieseasons.to_csv("newseasons.csv", index = False)
+rookieseasons = rookieseasons[
+    (rookieseasons['draft_year'].astype(float) + 1 == rookieseasons['season'].astype(float)) |
+    (rookieseasons['draft_year'].astype(float) == rookieseasons['season'].astype(float))
+]
+
+
+rookieseasons.drop(['player_height', 'draft_year', 'ovrdraftpick', 'season'], axis=1, inplace=True)
+
+
+finaldf = checkAllstar(rookieseasons, namedf, filename3)
+
+finaldf.to_csv("newseasons.csv", index = False)
 
 
 

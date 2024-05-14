@@ -8,7 +8,7 @@ from nba_api.stats.endpoints import playercareerstats
 filename = "datasets/alltimegreats.csv"
 filename2 = "datasets/newseasons.csv"
 
-def comparingFiles(filename,filename2):
+def removingDuplicates(filename,filename2):
     df = pd.read_csv(filename)
 
     df2 = pd.read_csv(filename2)
@@ -22,7 +22,8 @@ def comparingFiles(filename,filename2):
     return filtered
 
 
-newdf = comparingFiles(filename,filename2)
+newdf = removingDuplicates(filename,filename2)
+
 
 def getIDs(newdf):
     allnbaplayers = players.get_players()
@@ -70,7 +71,9 @@ filtered['SEASON_ID'] = pd.to_numeric(filtered['SEASON_ID'])
 
 filtered = filtered[filtered['SEASON_ID'] >= 1981]  
 
-filtered.drop(['TEAM_ABBREVIATION', 'TEAM_ID', 'PLAYER_ID', 'SEASON_ID', 'LEAGUE_ID' ], axis=1, inplace=True)
+filtered.drop(['TEAM_ABBREVIATION', 'TEAM_ID', 'PLAYER_ID', 'SEASON_ID', 'LEAGUE_ID', 'net_rating' ], axis=1, inplace=True)
+
+filtered['isallstar'] = 1
 
 filtered.to_csv("alltimegreatFirstTwoSeasons.csv",index = False)
 
