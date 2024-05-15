@@ -2,11 +2,34 @@ import numpy as np
 import pandas as pd
 from nba_api.stats.static import players
 from nba_api.stats.endpoints import playercareerstats
-
+import requests
+import time
 
 
 filename = "datasets/alltimegreats.csv"
 filename2 = "datasets/newseasons.csv"
+
+filename3 = "datasets/final_data.csv"
+filename4 = "datasets/alltimegreats.csv"
+
+
+namedf = pd.read_csv(filename3)
+
+
+namedf['name'] = namedf['first'] + ' ' + namedf['last']
+
+def checkAllstar(df,namedf,filename3):
+
+    df3 = pd.read_csv(filename3)
+    
+    # result = pd.concat([df3.iloc[:, 0], namedf['name']], axis=1)
+
+    mask = df.iloc[:, 0].isin(namedf['name'])
+
+    df['isallstar'] = mask.astype(int)
+
+    return df
+
 
 def removingDuplicates(filename,filename2):
     df = pd.read_csv(filename)
@@ -25,55 +48,66 @@ def removingDuplicates(filename,filename2):
 newdf = removingDuplicates(filename,filename2)
 
 
-def getIDs(newdf):
+def getIDs():
     allnbaplayers = players.get_players()
 
     ids = []
 
-    for ind in newdf.index:
-        name = newdf['Players'][ind]
+    for player in allnbaplayers:
+        ids.append(player['id'])
 
-        bigfund = next((player for player in allnbaplayers if player["full_name"] == name), None)
-        
-        if bigfund:
-            ids.append(bigfund['id'])
     return ids
 
 
-idlist = getIDs(newdf)
+
+idlist = getIDs()
+
+import requests
+import time
 
 def getStats(idlist):
     stats = []
     for id in idlist:
-        career = playercareerstats.PlayerCareerStats(player_id = id)
+        max_retries = 3
+        retry_interval = 5  
+        for attempt in range(max_retries):
+            try:
+                career = playercareerstats.PlayerCareerStats(player_id=id)
+                df = career.get_data_frames()[0]
+                firstTwo = df.head(2)
+                stats.append(firstTwo)
+                break  
+            except requests.exceptions.ReadTimeout:
+                if attempt < max_retries - 1:
+                    print("Timeout occurred. Retrying after {} seconds...".format(retry_interval))
+                    time.sleep(retry_interval)
+                else:
+                    print("Max retries exceeded for player ID {}. Skipping...".format(id))
+                    break
 
-        df = career.get_data_frames()[0]
-
-        firstTwo = df.head(2)
-
-        stats.append(firstTwo)
-
-
-    combineddf  = pd.concat(stats,ignore_index= True, sort = False)
-
+    combineddf = pd.concat(stats, ignore_index=True, sort=False)
     combineddf = combineddf.dropna(axis=1, how='all')
-
     return combineddf
+
 
 
 finaldf = getStats(idlist)
 
+finaldf = checkAllstar(finaldf,namedf,filename4 )
+
 filtered = finaldf.copy()
+
 
 filtered['SEASON_ID'] = filtered['SEASON_ID'].str[:4]  
 
 filtered['SEASON_ID'] = pd.to_numeric(filtered['SEASON_ID'])  
 
+
 filtered = filtered[filtered['SEASON_ID'] >= 1981]  
 
-filtered.drop(['TEAM_ABBREVIATION', 'TEAM_ID', 'PLAYER_ID', 'SEASON_ID', 'LEAGUE_ID' ], axis=1, inplace=True)
 
-filtered['isallstar'] = 1
+
+filtered.drop(['TEAM_ABBREVIATION', 'TEAM_ID', 'PLAYER_ID', 'SEASON_ID', 'LEAGUE_ID' ], axis=1, inplace=True)
 
 filtered.to_csv("alltimegreatFirstTwoSeasons.csv",index = False)
 

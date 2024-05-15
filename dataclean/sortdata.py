@@ -58,7 +58,7 @@ rookieseasons = rookieseasons[
 ]
 
 
-rookieseasons.drop(['player_height', 'draft_year', 'ovrdraftpick', 'season'], axis=1, inplace=True)
+rookieseasons.drop(['player_height', 'draft_year', 'ovrdraftpick', 'season', 'net_rating'], axis=1, inplace=True)
 
 
 finaldf = checkAllstar(rookieseasons, namedf, filename3)
