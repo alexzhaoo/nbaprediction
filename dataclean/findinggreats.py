@@ -71,7 +71,7 @@ import time
 
 def getStats(idlist):
     stats = []
-    for id in idlist:
+    for id in idlist[3327:]:
         max_retries = 3
         retry_interval = 5  
         for attempt in range(max_retries):
@@ -115,7 +115,7 @@ filtered = filtered[filtered['SEASON_ID'] >= 1981]
 
 filtered.drop(['TEAM_ABBREVIATION', 'TEAM_ID', 'PLAYER_ID', 'SEASON_ID', 'LEAGUE_ID' ], axis=1, inplace=True)
 
-filtered.to_csv("alltimegreatFirstTwoSeasons.csv",index = False)
+filtered.to_csv("secondhalf.csv",index = False)
 
 
 
