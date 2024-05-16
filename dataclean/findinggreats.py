@@ -24,7 +24,7 @@ def checkAllstar(df,namedf,filename3):
     
     # result = pd.concat([df3.iloc[:, 0], namedf['name']], axis=1)
 
-    mask = df.iloc[:, 0].isin(namedf['name'])
+    mask = df['FullName'].isin(namedf['name'])
 
     df['isallstar'] = mask.astype(int)
 
@@ -52,15 +52,19 @@ def getIDs():
     allnbaplayers = players.get_players()
 
     ids = []
+    playernames = []
 
     for player in allnbaplayers:
         ids.append(player['id'])
+        playernames.append(player['full_name'])
 
-    return ids
+    return ids , playernames
 
 
 
-idlist = getIDs()
+idlist , playerlist = getIDs()
+
+playernames = pd.DataFrame(playerlist, columns=['FullName'])
 
 import requests
 import time
@@ -93,6 +97,8 @@ def getStats(idlist):
 
 finaldf = getStats(idlist)
 
+finaldf['FullName'] = playernames
+
 finaldf = checkAllstar(finaldf,namedf,filename4 )
 
 filtered = finaldf.copy()
@@ -103,15 +109,13 @@ filtered['SEASON_ID'] = filtered['SEASON_ID'].str[:4]
 filtered['SEASON_ID'] = pd.to_numeric(filtered['SEASON_ID'])  
 
 
-filtered = filtered[filtered['SEASON_ID'] >= 1981]  
 
+filtered = filtered[filtered['SEASON_ID'] >= 1981]  
 
 
 filtered.drop(['TEAM_ABBREVIATION', 'TEAM_ID', 'PLAYER_ID', 'SEASON_ID', 'LEAGUE_ID' ], axis=1, inplace=True)
 
 filtered.to_csv("alltimegreatFirstTwoSeasons.csv",index = False)
-
-
 
 
 
