@@ -3,6 +3,21 @@ from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 import numpy as np
 from sklearn.impute import SimpleImputer
+import pickle
+
+
+def savemodel(weights, filename='perceptron_model.pkl'):
+    with open(filename, 'wb') as file:
+        pickle.dump(weights, file)
+
+
+def load_model(filename='perceptron_model.pkl'):
+    with open(filename, 'rb') as file:
+        weights = pickle.load(file)
+    return weights
+
+
+
 
 
 def accuracies(Xmat, yvec):
@@ -25,6 +40,8 @@ def accuracies(Xmat, yvec):
 
     accuracy = np.sum(perceptronPred == yvec.flatten()) / len(yvec)
 
+    savemodel(weightVector, 'perceptron_model.pkl')
+
     return accuracy
 
 
@@ -43,7 +60,7 @@ def perceptronLearningRule(Xaug, yvec, eta=1):
         rvec = yvec - qvec.flatten()
 
         weights = weights + eta * np.dot(Xaug.T, rvec).reshape(-1, 1)
-        
+
         missed = np.linalg.norm(rvec, 1) > 0
 
         if not missed:
@@ -70,7 +87,12 @@ scaledData = scaler.fit_transform(Xrawimputed)
 
 principalcomponents = pca.fit_transform(scaledData)
 
-print(accuracies(principalcomponents, ycoll))
+# loadedweights = loadmodel('perceptron_model.pkl')
+
+
+accuracy = accuracies(principalcomponents, ycoll)
+print(f"{accuracy * 100:.2f} %")
+
 
 
 
